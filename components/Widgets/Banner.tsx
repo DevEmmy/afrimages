@@ -3,8 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { RiSearch2Line } from 'react-icons/ri'
 
-const Banner = () => {
-    const nav = [
+export const nav = [
         {
             link: "/",
             text: "Explore"
@@ -26,6 +25,9 @@ const Banner = () => {
             text: "Contact Us"
         }
     ]
+
+const Banner = () => {
+   
     return (
         <div className='banner'>
             <nav className='flex-between'>
@@ -37,7 +39,7 @@ const Banner = () => {
                         {
                             nav.map((item, i) => {
                                 return (
-                                    <Link href={item.link}>
+                                    <Link href={item.link} key={i}>
                                         {item.text}
                                     </Link>
                                 )
@@ -57,7 +59,7 @@ const Banner = () => {
 
                 <div className='w-2/3 bg-white flex gap-2 p-2'>
                     <input type="text" className=' border-none focus:outline-none text-black w-full p-2' placeholder='Search here...'/>
-                    <button className='bg-green1000 py-3 px-5 flex gap-2 items-center'>
+                    <button className='bg-green700 py-2 px-5 flex gap-2 items-center'>
                         <RiSearch2Line />
                         Search
                     </button>
