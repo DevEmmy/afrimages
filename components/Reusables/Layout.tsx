@@ -1,13 +1,24 @@
+"use client"
 import Link from 'next/link';
-import React from 'react'
+import React, { useState } from 'react'
 import { nav } from '../Widgets/Banner';
 import { categories } from '../Widgets/Categories';
 import { RiSearch2Line } from 'react-icons/ri';
 import Footer from '../Widgets/Footer';
+import { useRouter } from 'next/navigation';
 
 const Layout = ({ children }: Readonly<{
     children: React.ReactNode;
 }>) => {
+
+    const router = useRouter();
+    const [search, setSearch] = useState("")
+
+    const handleSearch = (e: any) => {
+        e.preventDefault()
+        router.push(`/search?query=${search}`)
+    }
+
     return (
         <div className='flex flex-col gap-10'>
             <div className=' px-[5%] py-2 flex flex-col gap-2 border border-b fixed top-0 left-0 right-0 z-[100] bg-white'>
@@ -34,7 +45,7 @@ const Layout = ({ children }: Readonly<{
                     </Link>
                 </nav>
 
-                <div className='flex items-center justify-between border '>
+                <form className='flex items-center justify-between border'  onSubmit={handleSearch}>
                     <select name="categories" className='p-3 cursor-pointer' id="">
                         {
                             categories.map((cat, i) => {
@@ -44,12 +55,12 @@ const Layout = ({ children }: Readonly<{
                             })
                         }
                     </select>
-                    <input type="text" className=' border-none focus:outline-none text-black w-full p-2' placeholder='Search here...'/>
-                    <button className='bg-green700 text-white py-2 px-5 flex gap-2 items-center mx-1'>
+                    <input type="text" className=' border-none focus:outline-none text-black w-full p-2' placeholder='Search here...'  value={search} onChange={(e)=> setSearch(e.target.value as string)}/>
+                    <button className='bg-green700 text-white py-2 px-5 flex gap-2 items-center mx-1' type='submit' >
                         <RiSearch2Line />
                         Search
                     </button>
-                </div>
+                </form>
 
             </div>
 
