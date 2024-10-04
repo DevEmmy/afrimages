@@ -64,7 +64,7 @@ const Footer = () => {
     },
   ];
   return (
-    <div className="bg-green1100 py-10 px-[5%] text-[0.8em]">
+    <div className="bg-green1100 py-10 px-[5%] text-[0.8em] w-full">
       <div className="text-white grid-4">
         {footerContent.map((item, i) => {
           return (

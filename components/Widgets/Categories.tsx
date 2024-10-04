@@ -31,20 +31,25 @@ export const categories = [
 const Categories = () => {
     
   return (
-    <div className='flex flex-col gap-5'>
-        <h2 className='text-[24px] font-semibold'>Categories</h2>
-        <div className='flex gap-5 items-center'>
-            {
-                categories.map((item, i)=>{
-                    return(
-                        <Link href="/" style={{background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${item.url})`, backgroundPosition: "center"}} className='h-[100px] rounded-xl flex-center w-full bg-contain bg-center text-white'>
-                            {item.title}
-                        </Link>
-                    )
-                })
-            }
-        </div>
+<div className='flex flex-col gap-5'>
+    <h2 className='text-[24px] font-semibold ml-2'>Categories</h2>
+    <div className='flex gap-5 items-center overflow-x-scroll w-screen px-4 hide-scrollbar'>
+        {
+            categories.map((item, i)=> {
+                return (
+                    <Link 
+                        href="/" 
+                        key={i} 
+                        style={{background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${item.url})`, backgroundPosition: "center"}} 
+                        className='h-[100px] rounded-xl flex-center min-w-[190px] md:min-w-[250px] bg-contain bg-center text-white'>
+                        {item.title}
+                    </Link>
+                );
+            })
+        }
     </div>
+</div>
+
   )
 }
 
