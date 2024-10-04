@@ -36,7 +36,7 @@ body {
   background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(../public/images/banner.jpg);
   background-repeat: no-repeat;
   background-position: center;
-  @apply h-[450px] w-full bg-cover text-white px-[5%] py-5
+  @apply h-[450px] w-full bg-cover text-white px-[5%] py-5;
 }
 
 .flex-between{
@@ -103,4 +103,13 @@ body {
 
 input, select{
   @apply focus:outline-none
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; 
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;    
 }
