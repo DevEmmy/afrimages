@@ -50,7 +50,7 @@ const Banner = () => {
             onClick={() => setIsOpen(true)}
           />
         </div>
-        <Menu isOpen={isOpen} setIsOpen={setIsOpen} />
+        <Menu isOpen={isOpen} setIsOpen={setIsOpen} color="text-[#fba037]"/>
         <div className="items-center gap-10 hidden lg:flex">
           <Link href={"/"} className="text-white text-[32px] font-bold">
             Afrimages

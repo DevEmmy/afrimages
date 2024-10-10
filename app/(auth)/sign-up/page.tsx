@@ -39,7 +39,7 @@ const page = () => {
     ];
 
     return (
-        <div className='bg-[#FBFBFB] w-1/2 p-10 flex flex-col gap-3 rounded-3xl'>
+        <div className='bg-[#FBFBFB] lg:w-1/2 p-10 flex flex-col gap-3 rounded-3xl'>
             <h1 className='text-[32px] font-[600] text-center'>Create an Account</h1>
 
             <form action="" className='flex flex-col gap-4'>

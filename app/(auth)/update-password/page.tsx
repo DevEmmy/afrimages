@@ -34,7 +34,7 @@ const page = () => {
         }
     ]
     return (
-        <div className='bg-[#FBFBFB] w-1/3 p-10 flex flex-col gap-5 rounded-3xl'>
+        <div className='bg-[#FBFBFB] w-11/12 sm:w-fit lg:w-1/3 p-10 flex flex-col gap-5 rounded-3xl'>
             <div className=''>
                 <h1 className='text-[32px] font-[600]'>Update Password</h1>
                 <p className=''>A new set of characters to login your account.</p>

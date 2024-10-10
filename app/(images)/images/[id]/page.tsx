@@ -10,7 +10,7 @@ const page = () => {
         <Image src={"/./images/banner.jpg"} alt='Profile' width={100} height={100} className='rounded-full h-[70px] w-[70px] object-cover' />
         <div>
           <p className='font-[600]'>Emmanuel Olaosebikan</p>
-          <p className='text-xs'>Photographer at Afrimages</p>
+          <p className='text-xs'>Photographer Afrimages</p>
         </div>
       </div>
 

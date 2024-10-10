@@ -31,7 +31,7 @@ const page = () => {
         }
     ]
     return (
-        <div className='bg-[#FBFBFB] w-1/3 p-10 flex flex-col gap-3 rounded-3xl'>
+        <div className='bg-[#FBFBFB] w-11/12 sm:w-fit lg:w-1/3 p-10 flex flex-col gap-3 rounded-3xl'>
             <h1 className='text-[32px] font-[600]'>Reset Password</h1>
             <p className="text-sm">Enter the email address you used to register this account.</p>
 

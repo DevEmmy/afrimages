@@ -36,7 +36,7 @@ const OtpVerificationPage = () => {
     };
 
     return (
-        <div className="bg-[#FBFBFB] w-1/3 p-10 flex flex-col gap-3 rounded-3xl items-center">
+        <div className="bg-[#FBFBFB] w-11/12 sm:w-fit lg:w-1/3 p-10 flex flex-col gap-3 rounded-3xl items-center">
             <div>
                 <h1 className="text-[32px] font-[600] w-full">You’ve got mail, Dominic</h1>
                 <p className="text-sm">Please, enter the 6 digit OTP code sent to your email to continue.</p>

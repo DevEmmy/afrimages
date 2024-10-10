@@ -3,6 +3,7 @@ import { RiCloseLargeFill } from "react-icons/ri";
 
 
 interface Props {
+  color: string;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -30,7 +31,7 @@ export const nav = [
     },
   ];
 
-export const Menu: React.FC<Props> = ({isOpen, setIsOpen}) => {
+export const Menu: React.FC<Props> = ({isOpen, setIsOpen, color}) => {
     const toggleNav = () => {
         setIsOpen(!isOpen)
     }
@@ -42,10 +43,10 @@ export const Menu: React.FC<Props> = ({isOpen, setIsOpen}) => {
         } transition-transform duration-300 ease-in-out`}
       >
               
-          <Link href={"/"} className="text-[#fba037] text-[32px] font-bold text-center">
+          <Link href={"/"} className={` ${color} text-[32px] font-bold text-center`}>
             Afrimages
           </Link>
-
+          <RiCloseLargeFill onClick={toggleNav} className="absolute right-2 font-bold cursor-pointer"/>
           <div className="flex flex-col gap-5 md:text-sm lg:text-base text-[#959595]">
             {nav.map((item, i) => {
               return (
