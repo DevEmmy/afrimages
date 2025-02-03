@@ -31,7 +31,7 @@ export const categories = [
 const Categories = () => {
     
   return (
-<div className='flex flex-col gap-5'>
+<div className='flex flex-col gap-2'>
     <h2 className='text-[24px] font-semibold ml-2 p-3'>Categories</h2>
     <div className='flex gap-5 items-center overflow-x-scroll w-screen px-4 hide-scrollbar'>
         {

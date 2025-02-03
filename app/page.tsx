@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between overflow-hidden">
       <Banner />
-      <div className="px-[5%] flex flex-col gap-20 my-20">
+      <div className="px-[5%] flex flex-col gap-10 my-10">
         <Categories />
         <ImagesSamples />
         <Showcase />

@@ -39,7 +39,7 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
             width={500}
             height={500}
             unoptimized
-            src={"/./images/showcase.jpg"}
+            src={"/images/showcase.jpg"}
             alt={content.title}
             className="object-cover w-full h-full"
             unselectable="on"
@@ -52,7 +52,7 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
               unselectable="on"
               width={30}
               height={30}
-              src={"/./images/banner.jpg"}
+              src={"/images/banner.jpg"}
               unoptimized
               alt="profile-picture"
               className="w-[40px] h-[40px] object-cover rounded-full border border-orange400"

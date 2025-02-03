@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import H_ImagesContainer from '../Reusables/H_ImagesContainer'
+import Link from 'next/link'
 
 const ImagesSamples = () => {
     return (
@@ -11,9 +12,9 @@ const ImagesSamples = () => {
                         Oh Yes! Uploading your Photographs.
                     </p>
                     <p className='text-sm text-white'>Preserve every moment, frame your story.</p>
-                    <button className='bg-white py-2 px-5 rounded-full w-fit text-sm'>
+                    <Link href={"/auth/sign-up"} className='bg-white py-2 px-5 rounded-full w-fit text-sm'>
                         Create Account
-                    </button>
+                    </Link>
                 </div>
 
                 <Image src={"/./images/ads.png"} alt="Image" width={0} height={0} className='w-full lg:h-full h-0' unoptimized />

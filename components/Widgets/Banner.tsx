@@ -75,17 +75,17 @@ const Banner = () => {
         </Link>
       </nav>
 
-      <div className="flex items-center justify-center flex-col gap-5 w-2/3 text-center mx-auto mt-20">
-        <h1 className="text-2xl sm:text-3xl md:text-[32px] leading-8 font-bold">
+      <div className="flex items-center justify-center flex-col gap-5 w-full md:w-2/3 text-center mx-auto mt-20">
+        <h1 className="text-3xl sm:text-3xl md:text-[32px] leading-8 font-bold">
           Discover, Download, and Share the Finest Images from Afrimages
         </h1>
-        <p className="text-xs sm:text-base">
+        <p className="text-[18px] sm:text-[20px]">
           Discover AfrImage's diverse collection, showcasing Africa's beauty.
           Bring it into your space with high-res downloads, sharing globally.
-          Embark on a visual journey effortlessly.
+          
         </p>
 
-        <form className="w-4/5 md:w-2/3 bg-white flex gap-2 p-2" onSubmit={handleSearch}>
+        <form className="w-full md:w-2/3 bg-white flex gap-2 p-2" onSubmit={handleSearch}>
           <input
             type="text"
             className=" border-none focus:outline-none text-black w-full p-2"
