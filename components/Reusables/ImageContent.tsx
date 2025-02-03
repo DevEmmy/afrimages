@@ -41,7 +41,7 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
             unoptimized
             src={"/images/showcase.jpg"}
             alt={content.title}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full rounded-xl"
             unselectable="on"
           />
         </div>

@@ -20,7 +20,11 @@ const ImagesSamples = () => {
                 <Image src={"/./images/ads.png"} alt="Image" width={0} height={0} className='w-full lg:h-full h-0' unoptimized />
             </div>
 
-            <div className='col-span-3 px-2'>
+            <div className='col-span-3 px-2 my-10'>
+                <div className='flex flex-col gap-2 items-center justify-center text-center py-5'>
+                    <h2 className='text-[32px] font-[600]'>Get Inspired</h2>
+                    <p className='text-[18px] text-gray-500'>Discover AfrImage's diverse collection, showcasing Africa's beauty</p>
+                </div>
             <H_ImagesContainer />
             </div>
         </div>
