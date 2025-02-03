@@ -62,7 +62,7 @@ const Layout = ({
           className="flex items-center justify-between border"
           onSubmit={handleSearch}
         >
-          <select name="categories" className="p-3 cursor-pointer" id="">
+          <select name="categories" className="py-3 px-1 w-[40%] cursor-pointer" id="">
             {categories.map((cat, i) => {
               return (
                 <option value={cat.title} key={i} className="cursor-pointer">
@@ -79,7 +79,7 @@ const Layout = ({
             onChange={(e) => setSearch(e.target.value as string)}
           />
           <button
-            className="bg-green700 text-white py-2 px-5 flex gap-2 items-center mx-1"
+            className="bg-green700 text-white py-2 px-2 rounded-md flex gap-1 items-center mx-1"
             type="submit"
           >
             <RiSearch2Line />

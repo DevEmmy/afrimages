@@ -32,7 +32,7 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
   };
 
   return (
-    <Link href={`/images/${content._id}`} >
+    <Link href={`/images/${content._id}`}>
       <div className="relative top-0 left-0 w-full -z-0 main-image ">
         <div className="w-full h-full">
           <Image
@@ -45,9 +45,10 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
             unselectable="on"
           />
         </div>
+
         <div className="image-options">
           <div className="full-overlay" />
-          <div className="absolute z-20 flex items-center gap-2 top-1 left-3">
+          <div className="absolute z-20 flex items-center gap-2 top-3 left-3">
             <Image
               unselectable="on"
               width={30}
@@ -58,22 +59,29 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
               className="w-[40px] h-[40px] object-cover rounded-full border border-orange400"
             />
             <div className="flex flex-col leading-tight text-white">
-              <p className="f">{content.userId?.firstName}</p>
+              <p className="text-[20px]">{content.userId?.firstName}</p>
             </div>
           </div>
-          <div className="absolute z-20 flex items-center justify-between w-full px-3 bottom-1">
-            <div className="flex items-center gap-2">
-              <div className="img-icon">
-                <RiHeart2Line />
-              </div>
-
-              <div className="img-icon">
-                <RiAddLine />
-              </div>
+          <div className="absolute z-20 flex  justify-between flex-col w-full px-3 bottom-3">
+            <div className="text-white text-[18px] pb-2">
+              Lady from the east having a session with her developers on a
+              proposal
             </div>
 
-            <div className="img-icon text-sm" onClick={downloadImage}>
-              Download
+            <div className="flex  justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <div className="img-icon">
+                  <RiHeart2Line size={24}/>
+                </div>
+
+                <div className="img-icon">
+                  <RiAddLine size={24}/>
+                </div>
+              </div>
+
+              <div className="img-icon text-[20px]" onClick={downloadImage}>
+                Download
+              </div>
             </div>
           </div>
         </div>
