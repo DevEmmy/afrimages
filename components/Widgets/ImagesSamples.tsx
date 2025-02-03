@@ -12,7 +12,7 @@ const ImagesSamples = () => {
                         Oh Yes! Uploading your Photographs.
                     </p>
                     <p className='text-sm text-white'>Preserve every moment, frame your story.</p>
-                    <Link href={"/auth/sign-up"} className='bg-white py-2 px-5 rounded-full w-fit text-sm'>
+                    <Link href={"/sign-up"} className='bg-white py-2 px-5 rounded-full w-fit text-sm'>
                         Create Account
                     </Link>
                 </div>
