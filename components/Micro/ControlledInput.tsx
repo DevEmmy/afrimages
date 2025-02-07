@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi'; // Import eye icons
 
-interface ControlledInputProps {
+export interface ControlledInputProps {
   name: string;
   label: string;
   type?: string;
   placeholder?: string;
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ControlledInput: React.FC<ControlledInputProps> = ({
