@@ -4,11 +4,13 @@ import Footer from "@/components/Widgets/Footer";
 import ImagesSamples from "@/components/Widgets/ImagesSamples";
 import Showcase from "@/components/Widgets/Showcase";
 import Image from "next/image";
+import Features from "@/components/Widgets/Features";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between overflow-hidden">
+    <main className="flex min-h-screen flex-col  justify-between overflow-hidden">
       <Banner />
+      <Features />
       <div className="px-[5%] flex flex-col gap-10 my-10">
         <Categories />
         <ImagesSamples />

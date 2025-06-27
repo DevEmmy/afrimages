@@ -64,56 +64,52 @@ const Footer = () => {
     },
   ];
   return (
-    <div className="bg-green1100 py-10 px-[5%] text-[0.8em] w-full">
-      <div className="text-white grid-4">
-        {footerContent.map((item, i) => {
-          return (
-            <div key={item.title}>
-              <h2 className="text-[1.2em] font-semibold border-b-2 mb-4 border-solid  border-orange800 inline">
-                {item.title}
-              </h2>
-
-              <div className="flex flex-col gap-3 py-2">
-                {item.sub.map((sub, j) => {
-                  return (
-                    <a key={sub.title} href={sub.link} className="block">
-                      {sub.title}
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-
-        <div className="">
-          <h2 className="text-[1.2em] font-semibold border-b-2 mb-4 border-solid border-orange800 inline">
-            Social Media
-          </h2>
-          <div className="flex flex-col gap-3 py-2">
-            <div className="flex gap-2">
-              <RiFacebookLine className="circle" size={35} />
-              <RiTwitterLine className="circle" size={35} />
-              <RiInstagramLine className="circle" size={35} />
-            </div>
-
-            <p className="text-white">Get exclusive updates just for you</p>
-
-            <Link href={"/account/register"}>
-              <div className="bg-orange800 text-white py-3 px-6 text-[0.8em] rounded-md w-fit cursor-pointer">
-                Sign Up
-              </div>
-            </Link>
+    <footer className="bg-black pt-14 pb-8 px-[5%] w-full mt-16">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-10 text-white">
+        {/* Footer columns */}
+        {footerContent.map((item, i) => (
+          <div key={item.title}>
+            <h2 className="text-lg font-[500] mb-4 border-l-4 border-orange-500 pl-3">
+              {item.title}
+            </h2>
+            <ul className="flex flex-col gap-3">
+              {item.sub.map((sub) => (
+                <li key={sub.title}>
+                  <a href={sub.link} className="text-gray-300 hover:text-orange-400 transition">
+                    {sub.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+        ))}
+        {/* Social & Signup */}
+        <div className="flex flex-col gap-4 md:col-span-2">
+          <h2 className="text-lg font-[500] mb-4 border-l-4 border-orange-500 pl-3">Social & Updates</h2>
+          <div className="flex gap-4 mb-2">
+            <a href="#" className="rounded-full bg-white/10 p-2 text-white hover:bg-orange-500 hover:shadow-[0_0_16px_4px_rgba(251,160,55,0.7)] transition">
+              <RiFacebookLine size={28} />
+            </a>
+            <a href="#" className="rounded-full bg-white/10 p-2 text-white hover:bg-orange-500 hover:shadow-[0_0_16px_4px_rgba(251,160,55,0.7)] transition">
+              <RiTwitterLine size={28} />
+            </a>
+            <a href="#" className="rounded-full bg-white/10 p-2 text-white hover:bg-orange-500 hover:shadow-[0_0_16px_4px_rgba(251,160,55,0.7)] transition">
+              <RiInstagramLine size={28} />
+            </a>
+          </div>
+          <p className="text-gray-400 mb-2">Get exclusive updates just for you</p>
+          <Link href={"/account/register"}>
+            <span className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semi[500] py-3 px-8 rounded-full shadow-lg transition cursor-pointer text-base">
+              Sign Up
+            </span>
+          </Link>
         </div>
       </div>
-
-      <div className="w-full h-[1px] bg-white my-5"></div>
-
-      <p className="text-white text-center">
-        Afrimages - {new Date().getFullYear()}
+      <div className="w-full h-[1px] bg-white/10 my-8"></div>
+      <p className="text-gray-400 text-center text-sm tracking-wide">
+        Afrimages &copy; {new Date().getFullYear()}
       </p>
-    </div>
+    </footer>
   );
 };
 
