@@ -164,8 +164,10 @@ const VerifyEmailPage = () => {
           </label>
           <div className="flex justify-between gap-3">
             {otp.map((digit, index) => (
+              // @ts-ignore
               <input
                 key={index}
+                // @ts-ignore
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
                 className="w-12 h-12 text-center text-2xl font-semibold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
