@@ -14,19 +14,19 @@ export const nav = [
     text: "Explore",
   },
   {
-    link: "/",
+    link: "/photographers",
     text: "Photographers",
   },
   {
-    link: "/",
+    link: "/pricing",
     text: "Pricing",
   },
   {
-    link: "/",
+    link: "/about",
     text: "About us",
   },
   {
-    link: "/",
+    link: "/contact",
     text: "Contact Us",
   },
 ];
