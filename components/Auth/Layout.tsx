@@ -4,6 +4,7 @@ import Button from '../Micro/Button'
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft2 } from 'iconsax-react';
+import Image from 'next/image';
 
 
 const Layout = ({ children }: Readonly<{
@@ -33,12 +34,13 @@ const Layout = ({ children }: Readonly<{
 
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group">
-                            <img 
-                                src="/images/logo2.png" 
+                            <Image 
+                                src="/./images/Logo2.png" 
                                 alt="Afrimages Logo" 
                                 width={40} 
                                 height={40} 
                                 className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
+                                unoptimized
                             />
                             <span className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors duration-300">
                                 Afrimages

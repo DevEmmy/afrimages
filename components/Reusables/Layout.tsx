@@ -45,7 +45,7 @@ const Layout = ({
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 group">
                 <img
-                  src="/images/logo2.png"
+                  src="/images/Logo2.png"
                   alt="Afrimages Logo"
                   width={40}
                   height={40}

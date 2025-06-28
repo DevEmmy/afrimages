@@ -55,6 +55,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         {/* Logo */}
                         <Link href="/" className="flex items-center justify-center gap-3 group">
                             <Image 
+                            unoptimized
                                 src={"/./images/Logo2.png"} 
                                 alt="Afrimages Logo" 
                                 width={40} 
