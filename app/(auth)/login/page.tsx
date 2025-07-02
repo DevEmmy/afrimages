@@ -11,6 +11,8 @@ import {
 } from 'iconsax-react';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
+import { useLogin } from '@/components/hooks/useAuth';
+import { toastError, toastSuccess } from '@/components/Micro/toastUtils';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +21,8 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const loginMutation = useLogin();
+  const isLoading = loginMutation.status === 'pending';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,13 +34,13 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Login attempt:', formData);
-      setIsLoading(false);
-    }, 2000);
+    try {
+      await loginMutation.mutateAsync(formData);
+      toastSuccess('Login successful!');
+      // Optionally redirect here
+    } catch (err: any) {
+      toastError(err?.message || 'Login failed');
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -192,6 +195,12 @@ const LoginPage = () => {
             </Link>
           </p>
         </div>
+
+        {loginMutation.isError && (
+          <div className="mb-4 text-red-600 text-center text-sm">
+            {(loginMutation.error as any)?.message || 'Login failed'}
+          </div>
+        )}
       </div>
 
       {/* Trust Indicators */}

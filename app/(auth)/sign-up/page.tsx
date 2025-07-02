@@ -14,11 +14,14 @@ import {
 } from 'iconsax-react';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
+import { useRegister } from '@/components/hooks/useAuth';
+import { toastSuccess, toastError } from '@/components/Micro/toastUtils';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    username: "",
     email: "",
     phoneNumber: "",
     brandName: "",
@@ -28,8 +31,11 @@ const SignUpPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const registerMutation = useRegister();
+
+  const isLoading = registerMutation.status === 'pending';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -42,21 +48,27 @@ const SignUpPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptTerms) {
-      alert('Please accept the terms and conditions');
+      toastError('Please accept the terms and conditions');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toastError('Passwords do not match');
       return;
     }
-    
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Sign up attempt:', formData);
-      setIsLoading(false);
-    }, 2000);
+    try {
+      await registerMutation.mutateAsync({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.userType,
+      });
+      // toastSuccess('Account created successfully!');
+      // Optionally redirect or show success
+    } catch (err: any) {
+      toastError(err?.message || 'Sign up failed');
+    }
   };
 
   const handleSocialSignUp = (provider: string) => {
@@ -65,6 +77,11 @@ const SignUpPage = () => {
 
   return (
     <div className="w-full max-w-md">
+      {registerMutation.isError && (
+        <div className="mb-4 text-red-600 text-center text-sm">
+          {(registerMutation.error as any)?.message || 'Sign up failed'}
+        </div>
+      )}
       {/* Header */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 rounded-full px-4 py-2 mb-4">
@@ -100,6 +117,7 @@ const SignUpPage = () => {
                   required
                   className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                   placeholder="First name"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -119,6 +137,7 @@ const SignUpPage = () => {
                   required
                   className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                   placeholder="Last name"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -141,6 +160,7 @@ const SignUpPage = () => {
                 required
                 className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                 placeholder="Enter your email address"
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -161,6 +181,7 @@ const SignUpPage = () => {
                 onChange={handleChange}
                 className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                 placeholder="+234"
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -175,6 +196,7 @@ const SignUpPage = () => {
               value={formData.userType}
               onChange={handleChange}
               className="w-full px-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 bg-white"
+              disabled={isLoading}
             >
               <option value="user">Basic User</option>
               <option value="photographer">Photographer/Content Creator</option>
@@ -198,6 +220,7 @@ const SignUpPage = () => {
                   onChange={handleChange}
                   className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                   placeholder="Your brand name"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -221,6 +244,7 @@ const SignUpPage = () => {
                 minLength={8}
                 className="w-full pl-12 pr-12 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                 placeholder="Minimum 8 characters"
+                disabled={isLoading}
               />
               <button
                 type="button"
@@ -250,6 +274,7 @@ const SignUpPage = () => {
                 minLength={8}
                 className="w-full pl-12 pr-12 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
                 placeholder="Confirm your password"
+                disabled={isLoading}
               />
               <button
                 type="button"
@@ -269,6 +294,7 @@ const SignUpPage = () => {
               onChange={(e) => setAcceptTerms(e.target.checked)}
               required
               className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 mt-1"
+              disabled={isLoading}
             />
             <label className="text-sm text-gray-700 leading-relaxed">
               By creating an account, you agree to our{' '}
@@ -285,20 +311,10 @@ const SignUpPage = () => {
           {/* Sign Up Button */}
           <button
             type="submit"
-            disabled={isLoading || !acceptTerms}
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-2xl font-semibold text-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 px-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+            disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                Creating account...
-              </>
-            ) : (
-              <>
-                Create Account
-                <ArrowRight3 size={20} />
-              </>
-            )}
+            {isLoading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
 
