@@ -1,13 +1,16 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { nav } from "../Widgets/Banner";
 import { categories } from "../Widgets/Categories";
 import { RiMenu2Line, RiSearch2Line, RiCloseLine } from "react-icons/ri";
 import Footer from "../Widgets/Footer";
 import { useRouter } from "next/navigation";
 import { Menu } from "../Micro/Menu";
-import { SearchNormal, User, Heart, ArrowDown2 } from "iconsax-react";
+import { SearchNormal, User, Heart, ArrowDown2, Logout, Setting2, Profile } from "iconsax-react";
+import { useUserStore } from "../hooks/useUserStore";
+import { useLogout } from "../hooks/useAuth";
+import Image from "next/image";
 
 const Layout = ({
   children,
@@ -19,11 +22,144 @@ const Layout = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showSearch, setShowSearch] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  
+  const { user } = useUserStore();
+  const logoutMutation = useLogout();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.user-dropdown')) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e: any) => {
     e.preventDefault();
     router.push(`/search?query=${search}`);
   };
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+    setShowUserDropdown(false);
+  };
+
+  // User Dropdown Component
+  const UserDropdown = () => (
+    <div className="relative user-dropdown">
+      <button
+        onClick={() => setShowUserDropdown(!showUserDropdown)}
+        className="flex items-center gap-2 p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+      >
+        {user?.avatarUrl ? (
+          <Image
+            src={user.avatarUrl}
+            alt={`${user.firstName} ${user.lastName}`}
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+            <User size={16} className="text-gray-700" />
+          </div>
+        )}
+        <span className="hidden md:block font-medium">
+          {user?.firstName}
+        </span>
+        <ArrowDown2 
+          size={16} 
+          className={`transition-transform duration-300 ${showUserDropdown ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {showUserDropdown && (
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+          {/* User Info */}
+          <div className="px-4 py-3 border-b border-gray-100">
+            <div className="grid grid-cols-[1fr_8fr] items-center gap-3">
+              {user?.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={`${user.firstName} ${user.lastName}`}
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                  <User size={20} className="text-gray-600" />
+                </div>
+              )}
+              <div>
+                <p className="font-medium text-gray-900">
+                  {user?.firstName}
+                </p>
+                <p className="text-sm text-gray-500">{user?.email}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu Items */}
+          <div className="py-2">
+            <Link
+              href={`/profile/${user?._id}`}
+              onClick={() => setShowUserDropdown(false)}
+              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <Profile size={18} />
+              <span>View Profile</span>
+            </Link>
+            
+            <Link
+              href="/profile"
+              onClick={() => setShowUserDropdown(false)}
+              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <Setting2 size={18} />
+              <span>Settings</span>
+            </Link>
+
+            <Link
+              href="/favorites"
+              onClick={() => setShowUserDropdown(false)}
+              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <Heart size={18} />
+              <span>My Favorites</span>
+            </Link>
+
+            <Link
+              href="/downloads"
+              onClick={() => setShowUserDropdown(false)}
+              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+            >
+              <ArrowDown2 size={18} />
+              <span>My Downloads</span>
+            </Link>
+          </div>
+
+          {/* Logout */}
+          <div className="border-t border-gray-100 pt-2">
+            <button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-200 w-full text-left"
+            >
+              <Logout size={18} />
+              <span>{logoutMutation.isPending ? 'Logging out...' : 'Logout'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,29 +226,35 @@ const Layout = ({
                 )}
               </button>
 
-              {/* User Actions */}
-              <div className="hidden md:flex items-center gap-3">
-                <Link
-                  href="/favorites"
-                  className="p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
-                >
-                  <Heart size={20} />
-                </Link>
-                <Link
-                  href="/downloads"
-                  className="p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
-                >
-                  <ArrowDown2 size={20} />
-                </Link>
-              </div>
+              {/* User Actions - Only show if not authenticated */}
+              {!user && (
+                <div className="hidden md:flex items-center gap-3">
+                  <Link
+                    href="/favorites"
+                    className="p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                  >
+                    <Heart size={20} />
+                  </Link>
+                  <Link
+                    href="/downloads"
+                    className="p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                  >
+                    <ArrowDown2 size={20} />
+                  </Link>
+                </div>
+              )}
 
-              {/* Login Button */}
-              <Link
-                href="/login"
-                className="bg-gray-900 text-white px-6 py-2 rounded-xl hidden md:block font-medium hover:bg-gray-800 transition-all duration-300 hover:shadow-lg"
-              >
-                Login
-              </Link>
+              {/* Login Button or User Dropdown */}
+              {user ? (
+                <UserDropdown />
+              ) : (
+                <Link
+                  href="/login"
+                  className="bg-gray-900 text-white px-6 py-2 rounded-xl hidden md:block font-medium hover:bg-gray-800 transition-all duration-300 hover:shadow-lg"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
 
