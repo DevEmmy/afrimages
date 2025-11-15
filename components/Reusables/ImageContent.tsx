@@ -1,13 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiAddLine, RiHeart2Line, RiDownloadLine, RiUser3Line, RiHeartFill } from "react-icons/ri";
 import Image from "next/image";
 import Link from "next/link";
+import { downloadImageWithTracking, toggleImageFavorite, isImageFavoritedByUser } from "@/app/utils/trackingUtils";
+import { useImageViewTracking } from "@/components/hooks/useImageViewTracking";
+import { useUserStore } from "@/components/hooks/useUserStore";
+import PhotographerName from "@/components/Micro/PhotographerName";
 
 // Define the interface for the content prop
-interface User {
+interface Uploader {
   firstName: string;
-  profilePicture: string;
+  avatarUrl?: string;
 }
 
 interface ImageDimensions {
@@ -17,34 +21,93 @@ interface ImageDimensions {
 export interface ImageContentProps {
   _id: string;
   title: string;
-  newDimension: ImageDimensions;
-  userId: User;
+  variants: { thumbnail?: string };
+  uploader: Uploader;
+  description?: string;
+  originalUrl: string;
+  onRefetch?: () => void;
+  favoritedBy?: string[];
+  likesCount?: number;
 }
 
 const ImageContent: React.FC<ImageContentProps> = (content) => {
-  const [isLiked, setIsLiked] = useState(false);
+  const { user } = useUserStore();
+  const [isLiked, setIsLiked] = useState(isImageFavoritedByUser(content.favoritedBy, user?._id));
+  const [likesCount, setLikesCount] = useState(content.likesCount || 0);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const downloadImage = (e: React.MouseEvent) => {
+  useEffect(() => {
+    setIsLiked(isImageFavoritedByUser(content.favoritedBy, user?._id));
+  }, [content.favoritedBy, user?._id]);
+  
+  // Track view when image comes into viewport
+  useImageViewTracking(content._id, true, () => {
+    // Call onRefetch if provided after successful view tracking
+    if (content.onRefetch) {
+      content.onRefetch();
+    }
+  });
+  
+  console.log(content)
+ 
+  const downloadImage = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const link = document.createElement("a");
-    link.href = content.newDimension.url;
-    link.download = content.newDimension.url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  
+    const fileName =
+      content.title?.trim().replace(/\s+/g, "_").toLowerCase() || "image";
+  
+    await downloadImageWithTracking(
+      content._id,
+      content.originalUrl || "/images/showcase.jpg",
+      fileName,
+      'original',
+      () => {
+        // Call onRefetch if provided after successful download tracking
+        if (content.onRefetch) {
+          content.onRefetch();
+        }
+      }
+    );
   };
+  
+  
 
-  const toggleLike = (e: React.MouseEvent) => {
+
+  const toggleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsLiked(!isLiked);
+    
+    // Optimistic update
+    const newLikedState = !isLiked;
+    setIsLiked(newLikedState);
+    setLikesCount(prev => newLikedState ? prev + 1 : prev - 1);
+    
+    // Call API to toggle favorite
+    const result = await toggleImageFavorite(content._id, (isFavorited) => {
+      // Update state based on server response
+      setIsLiked(isFavorited);
+      setLikesCount(prev => isFavorited ? prev + 1 : prev - 1);
+      
+      // Call onRefetch if provided to update parent components
+      if (content.onRefetch) {
+        content.onRefetch();
+      }
+    });
+    
+    // If API call failed, revert optimistic update
+    if (!result) {
+      setIsLiked(!newLikedState);
+      setLikesCount(prev => !newLikedState ? prev + 1 : prev - 1);
+    }
   };
 
   return (
     <Link href={`/images/${content._id}`} className="block">
-      <div className="group relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
+      <div 
+        data-image-id={content._id}
+        className="group relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+      >
         {/* Loading Skeleton */}
         {!imageLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
@@ -55,11 +118,10 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
           width={500}
           height={500}
           unoptimized
-          src={"/images/showcase.jpg"}
+          src={content.variants.thumbnail || "/images/showcase.jpg"}
           alt={content.title}
-          className={`object-cover w-full h-full transition-all duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          } group-hover:scale-105`}
+          className={`object-cover w-full h-full transition-all duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+            } group-hover:scale-105`}
           unselectable="on"
           onLoad={() => setImageLoaded(true)}
           priority={false}
@@ -72,11 +134,11 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
         <div className="absolute top-0 left-0 right-0 p-4 z-10 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/30">
-              {content.userId?.profilePicture ? (
+              {content.uploader?.avatarUrl ? (
                 <Image
                   width={32}
                   height={32}
-                  src={"/images/showcase.jpg"}
+                  src={content.uploader.avatarUrl || "/images/profile-placeholder.png"}
                   alt="profile-picture"
                   className="w-8 h-8 object-cover rounded-full"
                   unoptimized
@@ -86,9 +148,11 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
               )}
             </div>
             <div className="flex flex-col">
-              <p className="text-white text-sm font-semibold leading-tight drop-shadow-sm">
-                {content.userId?.firstName || "Anonymous"}
-              </p>
+              <PhotographerName 
+                name={content.uploader?.firstName || "Anonymous"} 
+                size="sm" 
+                className="text-white drop-shadow-sm"
+              />
               <p className="text-white/80 text-xs drop-shadow-sm">Photographer</p>
             </div>
           </div>
@@ -99,14 +163,14 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
           {/* Title */}
           <div className="mb-3">
             <h3 className="text-white text-sm font-medium line-clamp-2 leading-tight drop-shadow-sm">
-              {content.title || "Lady from the east having a session with her developers on a proposal"}
+              {content.title || "Untitled Image"}
             </h3>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
                 onClick={toggleLike}
                 aria-label={isLiked ? "Unlike image" : "Like image"}
@@ -117,7 +181,7 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
                   <RiHeart2Line size={16} />
                 )}
               </button>
-              <button 
+              <button
                 className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
                 onClick={(e) => {
                   e.preventDefault();
@@ -129,14 +193,14 @@ const ImageContent: React.FC<ImageContentProps> = (content) => {
               </button>
             </div>
 
-            <button 
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
+            <button
               onClick={downloadImage}
-              aria-label="Download image"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
             >
               <RiDownloadLine size={14} />
               Download
             </button>
+
           </div>
         </div>
 

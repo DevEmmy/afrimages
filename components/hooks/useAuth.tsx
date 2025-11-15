@@ -54,6 +54,9 @@ export interface IUserProfile {
     createdAt: string;
     updatedAt: string;
     username: string;
+    location: string;
+    coverImage: string;
+    // profileImage: string;
 }
 export interface IAuthResponse {
     user: IUserProfile;

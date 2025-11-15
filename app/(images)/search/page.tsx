@@ -2,6 +2,9 @@
 import React, { useState, Suspense } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import H_ImagesContainer from '@/components/Reusables/H_ImagesContainer';
+import ImageContent, { ImageContentProps } from '@/components/Reusables/ImageContent';
+import { useSearchAssets, mapSearchResultToImageContent, SearchResponse } from '@/components/hooks/useSearchAssets';
+import { useImages } from '@/components/hooks/useImages';
 import { 
   Filter, 
   Sort, 
@@ -16,12 +19,18 @@ import {
 
 const PageContent = () => {
   const query = useSearchParams();
-  const searchQuery = query.get("query");
+  const searchQuery = query.get("query") || "";
+  const { refetchImage } = useImages();
+  
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('relevance');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Use the search hook
+  const { data: searchResults, isLoading, error, isFetching } = useSearchAssets(searchQuery, currentPage, 20);
 
   const categories = [
     'Nature', 'People', 'Architecture', 'Food', 'Travel', 'Business', 'Technology', 'Art'
@@ -44,7 +53,43 @@ const PageContent = () => {
     { value: 'over50', label: 'Over $50' }
   ];
 
-  const mockResults = 1247; // This would come from your API
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategories([]);
+    setPriceRange('all');
+    setSortBy('relevance');
+  };
+
+  // Loading state
+  if (isLoading && !searchResults) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Searching for "{searchQuery}"...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load search results</p>
+          <p className="text-gray-600">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const results = (searchResults as unknown as SearchResponse)?.data || [];
+  const totalResults = (searchResults as unknown as SearchResponse)?.pagination?.total || 0;
+  const hasMorePages = searchResults ? currentPage < (searchResults as unknown as SearchResponse).pagination.totalPages : false;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -115,7 +160,16 @@ const PageContent = () => {
               Results for <span className="font-semibold text-gray-900">"{searchQuery}"</span>
             </span>
             <span>•</span>
-            <span>{mockResults.toLocaleString()} images found</span>
+            <span>{totalResults.toLocaleString()} images found</span>
+            {isFetching && (
+              <>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
+                  Updating...
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -173,7 +227,10 @@ const PageContent = () => {
                 </div>
 
                 {/* Clear Filters */}
-                <button className="w-full py-3 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300">
+                <button 
+                  onClick={handleClearFilters}
+                  className="w-full py-3 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-300"
+                >
                   Clear All Filters
                 </button>
               </div>
@@ -185,11 +242,17 @@ const PageContent = () => {
             {/* Results Stats */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span>{mockResults.toLocaleString()} results</span>
+                <span>{totalResults.toLocaleString()} results</span>
                 {selectedCategories.length > 0 && (
                   <>
                     <span>•</span>
                     <span>{selectedCategories.length} categories selected</span>
+                  </>
+                )}
+                {currentPage > 1 && (
+                  <>
+                    <span>•</span>
+                    <span>Page {currentPage}</span>
                   </>
                 )}
               </div>
@@ -208,27 +271,62 @@ const PageContent = () => {
             </div>
 
             {/* Results Container */}
-            <div className={`${
-              viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' 
-                : 'space-y-4'
-            }`}>
-              {viewMode === 'grid' ? (
-                <H_ImagesContainer />
-              ) : (
-                // List view - we'll use the same images but with different styling
-                <div className="space-y-4">
-                  <H_ImagesContainer />
+            {results.length > 0 ? (
+              <>
+                <div className={`${
+                  viewMode === 'grid' 
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' 
+                    : 'space-y-4'
+                }`}>
+                  {results.map((result) => {
+                    const imageContent = mapSearchResultToImageContent(result);
+                    return (
+                      <ImageContent 
+                        key={imageContent._id} 
+                        {...imageContent} 
+                        onRefetch={() => refetchImage(imageContent._id)}
+                      />
+                    );
+                  })}
                 </div>
-              )}
-            </div>
 
-            {/* Load More */}
-            <div className="text-center mt-12">
-              <button className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                Load More Images
-              </button>
-            </div>
+                {/* Load More */}
+                {hasMorePages && (
+                  <div className="text-center mt-12">
+                    <button 
+                      onClick={handleLoadMore}
+                      disabled={isFetching}
+                      className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                    >
+                      {isFetching ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
+                          Loading...
+                        </>
+                      ) : (
+                        'Load More Images'
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-16">
+                <Camera size={64} className="mx-auto text-gray-400 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No results found</h3>
+                <p className="text-gray-600 mb-4">
+                  We couldn't find any images matching "{searchQuery}"
+                </p>
+                <div className="text-sm text-gray-500">
+                  <p>Try:</p>
+                  <ul className="mt-2 space-y-1">
+                    <li>• Using different keywords</li>
+                    <li>• Checking your spelling</li>
+                    <li>• Using more general terms</li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

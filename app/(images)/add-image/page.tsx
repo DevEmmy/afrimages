@@ -20,6 +20,7 @@ import {
 } from 'iconsax-react';
 import { useUserStore } from '@/components/hooks/useUserStore';
 import { useDropzone } from 'react-dropzone';
+import axiosInstance from '@/app/utils/axiosConfig';
 
 interface ImageUploadData {
   title: string;
@@ -65,28 +66,28 @@ const licenses = [
     price: 0,
     features: ['Personal use', 'Commercial use', 'Attribution required', 'No resale rights']
   },
-  {
-    id: 'premium',
-    name: 'Premium License',
-    description: 'Enhanced commercial rights with flexible usage',
-    price: 29.99,
-    features: ['All free features', 'No attribution required', 'Extended commercial use', 'Resale rights']
-  },
-  {
-    id: 'exclusive',
-    name: 'Exclusive License',
-    description: 'Exclusive rights for high-value commercial projects',
-    price: 199.99,
-    features: ['Exclusive usage rights', 'No attribution required', 'Unlimited commercial use', 'Transferable rights']
-  }
+  // {
+  //   id: 'premium',
+  //   name: 'Premium License',
+  //   description: 'Enhanced commercial rights with flexible usage',
+  //   price: 29.99,
+  //   features: ['All free features', 'No attribution required', 'Extended commercial use', 'Resale rights']
+  // },
+  // {
+  //   id: 'exclusive',
+  //   name: 'Exclusive License',
+  //   description: 'Exclusive rights for high-value commercial projects',
+  //   price: 199.99,
+  //   features: ['Exclusive usage rights', 'No attribution required', 'Unlimited commercial use', 'Transferable rights']
+  // }
 ];
 
 const AddImagePage = () => {
   const router = useRouter();
   const { user } = useUserStore();
   const [currentStep, setCurrentStep] = useState(1);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<ImageUploadData>({
@@ -115,22 +116,15 @@ const AddImagePage = () => {
 
   // File upload handling
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.filter(file => 
-      file.type.startsWith('image/') && 
-      !uploadedFiles.some(existing => existing.name === file.name)
-    );
-    
-    setUploadedFiles(prev => [...prev, ...newFiles]);
-    
-    // Create preview URLs
-    newFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviewUrls(prev => [...prev, e.target?.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
-  }, [uploadedFiles]);
+    const file = acceptedFiles.find(file => file.type.startsWith('image/'));
+    if (!file) return;
+    setUploadedFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPreviewUrl(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -138,12 +132,12 @@ const AddImagePage = () => {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.tiff']
     },
     maxSize: 50 * 1024 * 1024, // 50MB
-    multiple: true
+    multiple: false
   });
 
-  const removeFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  const removeFile = () => {
+    setUploadedFile(null);
+    setPreviewUrl('');
   };
 
   // Form handling
@@ -175,33 +169,38 @@ const AddImagePage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uploadedFiles.length === 0) {
-      alert('Please upload at least one image');
+    if (!uploadedFile) {
+      alert('Please upload an image');
       return;
     }
 
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          router.push('/profile');
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
+    // Prepare FormData
+    const formDataToSend = new FormData();
+    formDataToSend.append('file', uploadedFile);
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+    });
 
-    // Here you would typically upload to your backend
-    // const formDataToSend = new FormData();
-    // uploadedFiles.forEach(file => formDataToSend.append('images', file));
-    // Object.entries(formData).forEach(([key, value]) => {
-    //   formDataToSend.append(key, JSON.stringify(value));
-    // });
+    try {
+      await axiosInstance.post('/assets', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            setUploadProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+          }
+        },
+      });
+      setIsUploading(false);
+      router.push('/profile');
+    } catch (error) {
+      setIsUploading(false);
+      alert('Failed to upload image. Please try again.');
+    }
   };
 
   const steps = [
@@ -310,36 +309,34 @@ const AddImagePage = () => {
               </div>
 
               {/* Uploaded Files Preview */}
-              {uploadedFiles.length > 0 && (
+              {uploadedFile && (
                 <div className="mt-8">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Uploaded Images ({uploadedFiles.length})
+                    Uploaded Image
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {uploadedFiles.map((file, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={previewUrls[index]}
-                          alt={file.name}
-                          className="w-full h-32 object-cover rounded-xl"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeFile(index)}
-                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        >
-                          <CloseCircle size={16} />
-                        </button>
-                        <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {file.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                        </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="relative group">
+                      <img
+                        src={previewUrl}
+                        alt={uploadedFile.name}
+                        className="w-full h-32 object-cover rounded-xl"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      >
+                        <CloseCircle size={16} />
+                      </button>
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {uploadedFile.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -348,7 +345,7 @@ const AddImagePage = () => {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  disabled={uploadedFiles.length === 0}
+                  disabled={!uploadedFile}
                   className="bg-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next: Basic Information
@@ -803,18 +800,18 @@ const AddImagePage = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Image Preview</h3>
                   <div className="space-y-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="relative">
+                    {previewUrl && (
+                      <div className="relative">
                         <img
-                          src={url}
-                          alt={`Preview ${index + 1}`}
+                          src={previewUrl}
+                          alt="Preview"
                           className="w-full h-48 object-cover rounded-xl"
                         />
                         <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
-                          {uploadedFiles[index]?.name}
+                          {uploadedFile?.name}
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
 

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { SearchNormal, Filter, Star1, Camera, Location, User, Heart } from 'iconsax-react';
+import PhotographerName from '@/components/Micro/PhotographerName';
 
 interface Photographer {
   id: string;
@@ -263,7 +264,11 @@ const PhotographersPage = () => {
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">{photographer.name}</h3>
+                      <PhotographerName 
+                        name={photographer.name} 
+                        size="lg" 
+                        className="mb-1"
+                      />
                       <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
                         <Location size={16} />
                         <span>{photographer.location}</span>

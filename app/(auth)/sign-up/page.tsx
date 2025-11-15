@@ -199,12 +199,12 @@ const SignUpPage = () => {
               disabled={isLoading}
             >
               <option value="user">Basic User</option>
-              <option value="photographer">Photographer/Content Creator</option>
+              <option value="creator">Photographer/Content Creator</option>
             </select>
           </div>
 
           {/* Brand Name (conditional) */}
-          {formData.userType === "photographer" && (
+          {formData.userType === "creator" && (
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Brand Name

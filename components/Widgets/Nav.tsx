@@ -75,6 +75,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         width={32}
                         height={32}
                         className="w-8 h-8 rounded-full object-cover"
+                        unoptimized
                     />
                 ) : (
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -104,6 +105,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                                     width={40}
                                     height={40}
                                     className="w-10 h-10 rounded-full object-cover"
+                                    unoptimized
                                 />
                             ) : (
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -122,7 +124,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                     {/* Menu Items */}
                     <div className="py-2">
                         <Link
-                            href={`/profile/${user?._id}`}
+                            href={`/profile`}
                             onClick={() => setShowUserDropdown(false)}
                             className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                         >
