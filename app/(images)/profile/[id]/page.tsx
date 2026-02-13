@@ -216,9 +216,9 @@ const ProfilePage = () => {
           <div className="p-6">
             {activeTab === 'images' && (
               <div>
-                {userDetails.images?.length > 0 ? (
+                {(userDetails.images ?? []).length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {userDetails.images.map((img: ImageContentProps) => (
+                    {(userDetails.images ?? []).map((img: ImageContentProps) => (
                       <ImageContent key={img._id} {...img} />
                     ))}
                   </div>
@@ -233,9 +233,9 @@ const ProfilePage = () => {
 
             {activeTab === 'collections' && (
               <div>
-                {userDetails.collections?.length > 0 ? (
+                {(userDetails.collections ?? []).length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {userDetails.collections.map((col: any) => (
+                    {(userDetails.collections ?? []).map((col: any) => (
                       <div key={col.id} className="bg-gray-50 rounded-2xl p-0 border border-gray-100 shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer flex flex-col" onClick={() => openCollection(col)}>
                         <div className="h-40 w-full rounded-t-2xl overflow-hidden">
                           <img src={col.coverImage} alt={col.name} className="object-cover w-full h-full" />
@@ -261,9 +261,9 @@ const ProfilePage = () => {
 
             {activeTab === 'downloads' && (
               <div>
-                {userDetails.downloads?.length > 0 ? (
+                {(userDetails.downloads ?? []).length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {userDetails.downloads.map((img: ImageContentProps) => (
+                    {(userDetails.downloads ?? []).map((img: ImageContentProps) => (
                       <ImageContent key={img._id} {...img} />
                     ))}
                   </div>
@@ -278,9 +278,9 @@ const ProfilePage = () => {
 
             {activeTab === 'favorites' && (
               <div>
-                {userDetails.favorites?.length > 0 ? (
+                {(userDetails.favorites ?? []).length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {userDetails.favorites.map((img: ImageContentProps) => (
+                    {(userDetails.favorites ?? []).map((img: ImageContentProps) => (
                       <ImageContent key={img._id} {...img} />
                     ))}
                   </div>

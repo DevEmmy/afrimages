@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { RiCloseLargeFill } from "react-icons/ri";
+import { usePathname } from "next/navigation";
 
 interface Props {
   color: string;
@@ -32,6 +33,15 @@ export const nav = [
 ];
 
 export const Menu: React.FC<Props> = ({ isOpen, setIsOpen, color }) => {
+  const pathname = usePathname();
+
+  const isActiveLink = (href: string) => {
+    if (href === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(href);
+  };
+
   const toggleNav = () => {
     setIsOpen(!isOpen);
   };
@@ -63,8 +73,16 @@ export const Menu: React.FC<Props> = ({ isOpen, setIsOpen, color }) => {
         />
         <div className="flex flex-col  gap-5 md:text-sm lg:text-base text-[#959595]">
           {nav.map((item, i) => {
+            const isActive = isActiveLink(item.link);
             return (
-              <Link href={item.link} key={i}>
+              <Link
+                href={item.link}
+                key={i}
+                onClick={toggleNav}
+                className={`transition-colors duration-300 ${
+                  isActive ? 'text-white font-medium' : 'text-[#959595] hover:text-white'
+                }`}
+              >
                 {item.text}
               </Link>
             );
