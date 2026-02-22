@@ -30,16 +30,16 @@ const Footer = () => {
       sub: [
         { title: "About Us", link: "/about" },
         { title: "Become a Contributor", link: "/photographers" },
-        { title: "Sell your Content", link: "/" },
+        { title: "Sell your Content", link: "/sell-content" },
       ],
     },
     {
       title: "Legal",
       sub: [
-        { title: "Terms and Condition", link: "/" },
-        { title: "License agreement", link: "/" },
-        { title: "Copyright Information", link: "/" },
-        { title: "Privacy Policy", link: "/" },
+        { title: "Terms and Condition", link: "/terms-and-conditions" },
+        { title: "License agreement", link: "/license-agreement" },
+        { title: "Copyright Information", link: "/copyright-information" },
+        { title: "Privacy Policy", link: "/privacy-policy" },
       ],
     },
   ];
