@@ -5,16 +5,20 @@ import { Menu } from '../Micro/Menu';
 import { RiMenu2Line, RiSearch2Line, RiCloseLine } from 'react-icons/ri';
 import { nav } from './Banner';
 import { categories } from './Categories';
-import { SearchNormal, Heart, ArrowDown2, User, Logout, Setting2, Profile } from "iconsax-react";
+import { SearchNormal, ArrowDown2, User, Logout, Setting2, Profile } from "iconsax-react";
 import Image from 'next/image';
 import { useUserStore } from '../hooks/useUserStore';
 import { useLogout } from '../hooks/useAuth';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { usePathname } from 'next/navigation';
+import { ArrowDownToLine, Heart } from 'lucide-react';
 
-interface NavProps{
+interface NavProps {
     transparent?: boolean
 }
 
-const Nav: FC<NavProps> = ({transparent = true}) => {
+const Nav: FC<NavProps> = ({ transparent = true }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [search, setSearch] = useState("");
@@ -24,6 +28,40 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
     
     const { user } = useUserStore();
     const logoutMutation = useLogout();
+    const pathname = usePathname();
+
+    // Check if link is active
+    const isActiveLink = (href: string) => {
+        if (href === '/') {
+            return pathname === '/';
+        }
+        return pathname.startsWith(href);
+    };
+
+
+    useGSAP(() => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.from(".nav-bg", {
+            yPercent: -100,
+            duration: 1
+        })
+            .from(".nav-logo", {
+                y: -20,
+                opacity: 0,
+                duration: 0.5
+            }, "")
+            .from(".nav-link", {
+                y: -20,
+                opacity: 0,
+                duration: 0.5
+            }, "")
+            .from(".nav-action", {
+                y: -20,
+                opacity: 0,
+                duration: 0.5
+            }, "");
+
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -62,11 +100,10 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
         <div className="relative user-dropdown">
             <button
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className={`flex items-center gap-2 p-2 rounded-xl transition-all duration-300 ${
-                    scrolled 
-                        ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' 
+                className={`flex items-center gap-2 p-2 rounded-xl transition-all duration-300 ${scrolled
+                        ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                         : 'text-white hover:text-gray-200 hover:bg-white/10'
-                }`}
+                    }`}
             >
                 {user?.avatarUrl ? (
                     <Image
@@ -78,18 +115,17 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         unoptimized
                     />
                 ) : (
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        scrolled ? 'bg-gray-200 text-gray-700' : 'bg-white/20 text-white'
-                    }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scrolled ? 'bg-gray-200 text-gray-700' : 'bg-white/20 text-white'
+                        }`}>
                         <User size={16} />
                     </div>
                 )}
                 <span className="hidden md:block font-medium">
                     {user?.firstName}
                 </span>
-                <ArrowDown2 
-                    size={16} 
-                    className={`transition-transform duration-300 ${showUserDropdown ? 'rotate-180' : ''}`}
+                <ArrowDownToLine
+                    size={16}
+                    className={`transition-transform  duration-300 ${showUserDropdown ? 'rotate-180' : ''}`}
                 />
             </button>
 
@@ -126,16 +162,24 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         <Link
                             href={`/profile`}
                             onClick={() => setShowUserDropdown(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${
+                                isActiveLink('/profile') 
+                                    ? 'text-orange-600 bg-orange-50' 
+                                    : 'text-gray-700 hover:bg-gray-50'
+                            }`}
                         >
                             <Profile size={18} />
                             <span>View Profile</span>
                         </Link>
-                        
+
                         <Link
                             href="/profile"
                             onClick={() => setShowUserDropdown(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${
+                                isActiveLink('/profile') 
+                                    ? 'text-orange-600 bg-orange-50' 
+                                    : 'text-gray-700 hover:bg-gray-50'
+                            }`}
                         >
                             <Setting2 size={18} />
                             <span>Settings</span>
@@ -144,7 +188,11 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         <Link
                             href="/favorites"
                             onClick={() => setShowUserDropdown(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${
+                                isActiveLink('/favorites') 
+                                    ? 'text-orange-600 bg-orange-50' 
+                                    : 'text-gray-700 hover:bg-gray-50'
+                            }`}
                         >
                             <Heart size={18} />
                             <span>My Favorites</span>
@@ -153,9 +201,13 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         <Link
                             href="/downloads"
                             onClick={() => setShowUserDropdown(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                            className={`flex items-center gap-3 px-4 py-2 transition-colors duration-200 ${
+                                isActiveLink('/downloads') 
+                                    ? 'text-orange-600 bg-orange-50' 
+                                    : 'text-gray-700 hover:bg-gray-50'
+                            }`}
                         >
-                            <ArrowDown2 size={18} />
+                            <ArrowDownToLine size={18} />
                             <span>My Downloads</span>
                         </Link>
                     </div>
@@ -177,9 +229,8 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
     );
 
     return (
-        <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-            scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' : 'bg-transparent'
-        }`}>
+        <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' : 'bg-transparent'
+            }`}>
             <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
                 {/* Top Navigation */}
                 <div className="flex items-center justify-between py-4">
@@ -188,59 +239,65 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         {/* Mobile Menu */}
                         <div className="lg:hidden">
                             <RiMenu2Line
-                                className={`text-2xl cursor-pointer transition-colors duration-300 ${
-                                    scrolled ? 'text-gray-700 hover:text-gray-900' : 'text-white hover:text-gray-200'
-                                }`}
+                                className={`text-2xl cursor-pointer transition-colors duration-300 ${scrolled ? 'text-gray-700 hover:text-gray-900' : 'text-white hover:text-gray-200'
+                                    }`}
                                 onClick={() => setIsOpen(true)}
                             />
                         </div>
-                        
+
                         {/* Logo */}
-                        <Link href="/" className="flex items-center justify-center gap-3 group">
-                            <Image 
-                            unoptimized
-                                src={"/./images/Logo2.png"} 
-                                alt="Afrimages Logo" 
-                                width={40} 
-                                height={40} 
+                        <Link href="/" className="nav-logo flex items-center justify-center gap-3 group">
+                            <Image
+                                unoptimized
+                                src={"/./images/Logo2.png"}
+                                alt="Afrimages Logo"
+                                width={40}
+                                height={40}
                                 className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
                             />
-                            <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${
-                                scrolled ? 'text-gray-900 group-hover:text-gray-700' : 'text-white group-hover:text-gray-200'
-                            }`}>
+                            <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${scrolled ? 'text-gray-900 group-hover:text-gray-700' : 'text-white group-hover:text-gray-200'
+                                }`}>
                                 Afrimages
                             </span>
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex items-center gap-8">
-                            {nav.map((item, i) => (
-                                <Link 
-                                    href={item.link} 
-                                    key={i}
-                                    className={`font-medium transition-all duration-300 relative ${
-                                        scrolled 
-                                            ? 'text-gray-600 hover:text-gray-900' 
-                                            : 'text-white hover:text-gray-200'
-                                    }`}
-                                >
-                                    {item.text}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
-                                </Link>
-                            ))}
+                        <nav className="hidden nav-link lg:flex items-center gap-8">
+                            {nav.map((item, i) => {
+                                const isActive = isActiveLink(item.link);
+                                return (
+                                    <Link
+                                        href={item.link}
+                                        key={i}
+                                        className={`font-medium transition-all duration-300 relative ${
+                                            isActive
+                                                ? scrolled
+                                                    ? 'text-orange-500'
+                                                    : 'text-orange-400'
+                                                : scrolled
+                                                    ? 'text-gray-600 hover:text-gray-900'
+                                                    : 'text-white hover:text-gray-200'
+                                        }`}
+                                    >
+                                        {item.text}
+                                        <span className={`absolute -bottom-1 left-0 h-0.5 bg-orange-500 transition-all duration-300 ${
+                                            isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                                        }`}></span>
+                                    </Link>
+                                );
+                            })}
                         </nav>
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 nav-action">
                         {/* Mobile Search Toggle */}
                         <button
                             onClick={() => setShowSearch(!showSearch)}
-                            className={`lg:hidden p-2 rounded-xl transition-all duration-300 ${
-                                scrolled 
-                                    ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' 
+                            className={`lg:hidden p-2 rounded-xl transition-all duration-300 ${scrolled
+                                    ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                     : 'text-white hover:text-gray-200 hover:bg-white/10'
-                            }`}
+                                }`}
                         >
                             {showSearch ? <RiCloseLine size={20} /> : <SearchNormal size={20} />}
                         </button>
@@ -248,25 +305,33 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         {/* User Actions - Only show if not authenticated */}
                         {!user && (
                             <div className="hidden md:flex items-center gap-3">
-                                <Link 
-                                    href="/favorites" 
+                                <Link
+                                    href="/favorites"
                                     className={`p-2 rounded-xl transition-all duration-300 ${
-                                        scrolled 
-                                            ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' 
-                                            : 'text-white hover:text-gray-200 hover:bg-white/10'
+                                        isActiveLink('/favorites')
+                                            ? scrolled
+                                                ? 'text-orange-500 bg-orange-50'
+                                                : 'text-orange-400 bg-white/20'
+                                            : scrolled
+                                                ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                                : 'text-white hover:text-gray-200 hover:bg-white/10'
                                     }`}
                                 >
                                     <Heart size={20} />
                                 </Link>
-                                <Link 
-                                    href="/downloads" 
+                                <Link
+                                    href="/downloads"
                                     className={`p-2 rounded-xl transition-all duration-300 ${
-                                        scrolled 
-                                            ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' 
-                                            : 'text-white hover:text-gray-200 hover:bg-white/10'
+                                        isActiveLink('/downloads')
+                                            ? scrolled
+                                                ? 'text-orange-500 bg-orange-50'
+                                                : 'text-orange-400 bg-white/20'
+                                            : scrolled
+                                                ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                                : 'text-white hover:text-gray-200 hover:bg-white/10'
                                     }`}
                                 >
-                                    <ArrowDown2 size={20} />
+                                    <ArrowDownToLine size={20} />
                                 </Link>
                             </div>
                         )}
@@ -277,11 +342,10 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         ) : (
                             <Link
                                 href="/login"
-                                className={`px-6 hidden md:block py-2 rounded-xl font-medium transition-all duration-300 hover:shadow-lg ${
-                                    scrolled 
-                                        ? 'bg-gray-900 text-white hover:bg-gray-800' 
+                                className={`px-6 hidden md:block py-2 rounded-xl font-medium transition-all duration-300 hover:shadow-lg ${scrolled
+                                        ? 'bg-gray-900 text-white hover:bg-gray-800'
                                         : 'bg-orange-500 text-white hover:bg-orange-600 border-2 border-orange-500'
-                                }`}
+                                    }`}
                             >
                                 Login
                             </Link>
@@ -295,7 +359,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                         <form onSubmit={handleSearch} className="relative">
                             <div className="flex items-center bg-gray-100 rounded-2xl p-2 border border-gray-200 focus-within:border-gray-400 focus-within:bg-white transition-all duration-300">
                                 {/* Category Select */}
-                                <select 
+                                <select
                                     value={selectedCategory}
                                     onChange={(e) => setSelectedCategory(e.target.value)}
                                     className="bg-transparent border-none outline-none text-gray-700 font-medium px-3 py-2 cursor-pointer"
@@ -343,7 +407,7 @@ const Nav: FC<NavProps> = ({transparent = true}) => {
                             <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-lg">
                                 {/* Category Select - Full width on mobile */}
                                 <div className="mb-3">
-                                    <select 
+                                    <select
                                         value={selectedCategory}
                                         onChange={(e) => setSelectedCategory(e.target.value)}
                                         className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"

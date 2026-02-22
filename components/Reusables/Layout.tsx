@@ -11,6 +11,7 @@ import { SearchNormal, User, Heart, ArrowDown2, Logout, Setting2, Profile } from
 import { useUserStore } from "../hooks/useUserStore";
 import { useLogout } from "../hooks/useAuth";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const Layout = ({
   children,
@@ -18,6 +19,7 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -26,6 +28,14 @@ const Layout = ({
   
   const { user } = useUserStore();
   const logoutMutation = useLogout();
+
+  // Check if link is active
+  const isActiveLink = (href: string) => {
+    if (href === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(href);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -202,15 +212,25 @@ const Layout = ({
 
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center gap-8">
-                {nav.map((item, i) => (
-                  <Link
-                    href={item.link}
-                    key={i}
-                    className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-300"
-                  >
-                    {item.text}
-                  </Link>
-                ))}
+                {nav.map((item, i) => {
+                  const isActive = isActiveLink(item.link);
+                  return (
+                    <Link
+                      href={item.link}
+                      key={i}
+                      className={`font-medium transition-all duration-300 relative group ${
+                        isActive
+                          ? 'text-orange-500'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      {item.text}
+                      <span className={`absolute -bottom-1 left-0 h-0.5 bg-orange-500 transition-all duration-300 ${
+                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      }`}></span>
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 

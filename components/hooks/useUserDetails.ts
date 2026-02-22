@@ -12,10 +12,10 @@ export interface IUserDetails extends IUserProfile {
     rating?: number;
   };
   isFollowed?: boolean;
-  images?: any[];
-  collections?: any[];
-  downloads?: any[];
-  favorites?: any[];
+  images: any[];
+  collections: any[];
+  downloads: any[];
+  favorites: any[];
 }
 
 const getUserDetails = async (userId: string): Promise<IUserDetails> => {
@@ -29,6 +29,5 @@ export function useUserDetails(userId: string) {
     queryFn: () => getUserDetails(userId),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
   });
 } 

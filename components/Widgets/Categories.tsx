@@ -1,161 +1,181 @@
-import Link from 'next/link'
-import React from 'react'
-import Image from 'next/image'
-import { 
-  People, 
-  Tree, 
-  Coffee, 
-  Pet, 
-  Building, 
-  Shapes 
-} from "iconsax-react";
+"use client"
+import Link from "next/link";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/all";
+import gsap from "gsap";
+import {
+  Users,
+  TreePine,
+  Coffee,
+  PawPrint,
+  Building2,
+  Palette,
+  Utensils
+} from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Category {
   url: string;
   title: string;
   icon: React.ComponentType<{ size?: string | number; className?: string }>;
-  color: string;
-  bgColor: string;
+  // color: string;
+  hoverBg: string;
   count: string;
+  height: string;
 }
 
 export const categories: Category[] = [
-  {
-    url: "https://static.vecteezy.com/system/resources/thumbnails/032/467/163/small_2x/traditional-zulu-people-south-africa-within-an-african-tribe-photo.jpg",
-    title: "People",
-    icon: People,
-    color: "from-orange-500 to-red-500",
-    bgColor: "bg-orange-50",
-    count: "2.5K+"
-  },
-  {
-    url: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg",
-    title: "Nature",
-    icon: Tree,
-    color: "from-green-500 to-emerald-500",
-    bgColor: "bg-green-50",
-    count: "3.2K+"
-  },
-  {
-    url: "https://photos1.blogger.com/x/blogger/6449/2809/320/207294/africa.jpg",
-    title: "Food & Drinks",
-    icon: Coffee,
-    color: "from-amber-500 to-orange-500",
-    bgColor: "bg-amber-50",
-    count: "1.8K+"
-  },
-  {
-    url: "https://web.yorubaheritagetrails.com/wp-content/uploads/2023/12/867fe0f1741db4eeb695ae801ec77dd6.webp",
-    title: "Animals",
-    icon: Pet,
-    color: "from-purple-500 to-pink-500",
-    bgColor: "bg-purple-50",
-    count: "2.1K+"
-  },
-  {
-    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/View_from_Cairo_Tower_31march2007.jpg/1200px-View_from_Cairo_Tower_31march2007.jpg",
-    title: "Urban/City",
-    icon: Building,
-    color: "from-blue-500 to-cyan-500",
-    bgColor: "bg-blue-50",
-    count: "1.9K+"
-  },
-  {
-    url: "https://img.freepik.com/free-vector/aboriginal-doodle-pattern_1409-3913.jpg",
-    title: "Abstract",
-    icon: Shapes,
-    color: "from-teal-500 to-indigo-500",
-    bgColor: "bg-teal-50",
-    count: "1.5K+"
-  }
-]
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuDZU6ScLvFnpU_w6fhH8YTEdEIRjmzXiOZvkU5OQwPb6N0DwUNIKjeTY8Herdv6Qe-JWUCSmXRJkg_p6TTjVAqVxwilKHvvMpmD1XlYJ7gkRDpLHCuu2zjVlCpy9z91T69OzpZuMJ2n6cMz-nAT4vcpWOBYnITithCc2aZ4keUhdSEed5SFkG7VpmotnPHPNSWFV7nKJuBqA64DJXWkKNORqcMr0G3nZ3HjKitxIuTae6b1-6fL6MW_pstx9fs9PAsVKcpos9adxfI",
+     title: "People",
+     icon: Users,
+     hoverBg: "group-hover:bg-white/80",
+     count: "2.3K+ Images",
+     height: "h-[320px]"
+   },
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuA8Dox_DwjMyE9oR9GBKuxC7NJQY-a1gtmWzFJA24FmmDnvlKC-D4GQAGfjanW8U8jQbA-g_hsjkS0fo5fxW4pc5s62A2AqG1ursNEx34-CzQecGU1zd4SN37_x33EB62aDgqsukWsySpO9QE1SHVERgAyfzbj_Zg9ukzVafjRV7ursBYdiIwPDC5l0LxMWj0Xj1iUiHo0HEfWkHQQo57bZ7O3UE6xKgwEpL_gCIEFFTTcJCoTneSSYFGBV2_ok_rtz_qhcUIo6V9Y",
+     title: "Nature",
+     icon: TreePine,
+     hoverBg: "group-hover:bg-emerald-500",
+     count: "3.2K+ Images",
+     height: "h-[240px]"
+   },
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuAl9QIa8fve5uQ1AII7Eyf6-GmKlzwKwOGHMCv2bqa1SKoS1BVhsEqnKFm1FMae-y-L4lm3-skQD6OsknWnxjgkyYDOwYsmrIztlHmI7s7FzDM-6F5DlPkhvFA6if0a6GxoeyPKE3Z_cR8hWXQmaD3KHC3AWk3L9n3LdC9da1y2SxfW1w96OXdnXhKJxzRuB4xh8MjGfzcJbMXRy1r2Hhj_zmJvSdwJtpQWzaZO6bK1hdkIFeJFwsMIjvQo8gRZ3vBM68ldqbHr9h0",
+     title: "Abstract",
+     icon: Palette,
+     hoverBg: "group-hover:bg-indigo-500",
+     count: "1.5K+ Images",
+     height: "h-[400px]"
+   },
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuC-lnQSrvE9ymCsl20H9ZhIO6dxxJ8xnu-JmDSY5kU_xW-Of9jp3TVBDDDwTpBjzPmvqPGOT2Az6pNOD7o18EkvxSy9PMQpY91KBSWPPTnnypSD__yXOiMDY2-6KrC2vO463F4qhdkyLF9dZZmucoeYPnaFLSCADI5upqRVa_pZUn8Qs1orJbC86-XtkL4b6OVfULnByac2zTntwN-369Cxfku4vQGq23pp_87IpL96c666T13tG3ziL6WuilsWUNKAk7pcATWLFLo",
+     title: "Food & Drinks",
+     icon: Utensils,
+     hoverBg: "group-hover:bg-orange-500",
+     count: "1.8K+ Images",
+     height: "h-[260px]"
+   },
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuDOfZo2WqIgNfEBKWPutsy8noSBLLDyfF29UtX9BIhMqw9PVqNeOnXuQ_ZXCd61fbSsB_L8hwxwPNVc_9CV7K4_B3E0kWt7l5S5ujc_13Z6dwJGLNOzfuT6MR2IznlgHlCquOetriHWEZ6HBQQbJrhB7O_wo7TP21QDAIQbFKTfHSaWJaNOTpbj8ygI8odEU30UwPh9M9K1t-zxRRlrdSAJBNxL6v0iCsK10E9JBmmBhyMSq046v0D4YJ63hEuZBYHiS1ytT_BaHOo",
+     title: "Urban/City",
+     icon: Building2,
+     hoverBg: "group-hover:bg-cyan-500",
+     count: "1.1K+ Images",
+     height: "h-[300px]"
+   },
+   {
+     url: "https://lh3.googleusercontent.com/aida-public/AB6AXuA1jWv3iPzCjxp49QJLImJHNBY7Z-fu0cCf0Jo5LrihSD2kDThV441Yxt7JqtYlEZPoKxGfRCVsEupMGFReLlwHAw1zsD3HhYn44iAyFeR43UwudjK8yKbjYGAEBJziex1n-WI39_yJwmNc0Gd1tS0TAvS02lrbvfY6GQAX-nFhxCPukL_ZEmRj5JIrjYRsL3Tl2_4qtf-mi8GUMdadyBJCRM0q9qkqa1KIMuwWqzBV8mQE1xtX7qK23-2GK7Pg7afqH1JI7PXceTY",
+     title: "Animals",
+     icon: PawPrint,
+     hoverBg: "group-hover:bg-purple-500",
+     count: "3K+ Images",
+     height: "h-[340px]"
+   }
+ ];
+
 
 const Categories = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    // Set initial state for all items
+    gsap.set(itemRefs.current, {
+      opacity: 0,
+      y: 60,
+      scale: 0.9,
+      rotationY: 15
+    });
+
+    // Create popup animation for each item
+    itemRefs.current.forEach((item, index) => {
+      if (!item) return;
+
+      gsap.to(item, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        rotationY: 0,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+        delay: index * 0.1,
+        scrollTrigger: {
+          trigger: item,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+    });
+  }, []);
+
   return (
-    <section className="w-full py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Explore by Category
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Discover authentic African visuals across diverse categories, from people and nature to urban landscapes and abstract art.
-          </p>
-        </div>
+    <section className="px-6 py-16 max-w-7xl mx-auto mb-20">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Explore by Category
+        </h2>
+        <p className="text-gray-500 max-w-2xl mx-auto">
+          Discover authentic African visuals across diverse categories, from people and nature to urban landscapes and abstract art.
+        </p>
+      </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category, index) => {
-            const IconComponent = category.icon;
-            return (
-              <Link
-                href="/"
-                key={index}
-                className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+      <div ref={containerRef} className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+        {categories.map((cat, i) => {
+          const Icon = cat.icon;
+
+          return (
+            <Link
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              key={i}
+              href="/"
+              className={`block relative group rounded-2xl overflow-hidden cursor-pointer ${cat.height}`}
+            >
+              <img
+                src={cat.url}
+                alt={cat.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+              <div
+                className={`absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-lg text-white transition-colors duration-300 ${cat.hoverBg}`}
               >
-                {/* Background Image */}
-                <div className="relative h-64 w-full">
-                  <img
-                    src={category.url}
-                    alt={category.title}
-                    
-                    className="object-cover size-full  transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  
-                  {/* Icon Badge */}
-                  <div className="absolute top-4 right-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-lg`}>
-                      <IconComponent size={24} className="text-white" />
-                    </div>
-                  </div>
+                <Icon size={18} />
+              </div>
 
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
-                          {category.title}
-                        </h3>
-                        <p className="text-white/80 text-sm drop-shadow-lg">
-                          {category.count} images
-                        </p>
-                      </div>
-                      
-                      {/* Arrow indicator */}
-                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-2">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="absolute bottom-0 left-0 p-6 w-full">
+                <h3 className="text-white text-2xl font-bold mb-1">
+                  {cat.title}
+                </h3>
+                <p className="text-gray-300 text-xs uppercase tracking-wider mb-4">
+                  {cat.count}
+                </p>
 
-                {/* Hover Background */}
-                <div className={`absolute inset-0 ${category.bgColor} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-              </Link>
-            );
-          })}
-        </div>
+                <button className="text-white text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                  View Collection →
+                </button>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
-        {/* View All Categories CTA */}
-        <div className="text-center mt-16">
-          <Link 
-            href="/categories"
-            className="inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-gray-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-          >
-            View all categories
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
+      <div className="text-center mt-12">
+        <button className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-full text-sm font-medium inline-flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+          View all categories →
+        </button>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Categories
+export default Categories;

@@ -28,6 +28,26 @@ const config: Config = {
 
         success: "#0E8A1A",
         offWhite: "#F9F9F9",
+
+        primary: "#1A202C", // Dark charcoal/slate
+        secondary: "#E85D34", // Terracotta/Orange accent
+        "charcoal-dark": "#121212",
+        "glass-border": "rgba(255, 255, 255, 0.1)",
+        "glass-bg": "rgba(255, 255, 255, 0.05)",
+        "background-light": "#FAFAFA",
+        "surface-light": "#FFFFFF",
+        "text-light": "#1F2937",
+        "muted-light": "#6B7280",
+      },
+      borderRadius: {
+        DEFAULT: "0.75rem",
+        'xl': "1rem",
+        '2xl': "1.5rem",
+        '3xl': "2rem",
+      },
+      boxShadow: {
+        'soft': '0 4px 30px rgba(0, 0, 0, 0.03)',
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

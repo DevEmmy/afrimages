@@ -54,8 +54,6 @@ export function useSearchAssets(keyword: string, page: number = 1, limit: number
     queryFn: () => searchAssets(keyword, page, limit),
     enabled: !!keyword && keyword.trim().length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
-    keepPreviousData: true, // Keep previous data while loading new data
   });
 }
 

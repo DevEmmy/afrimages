@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
-import { Check, Star1, Crown, Flash, User, ArrowDown2 } from 'iconsax-react';
+import { Star1, Crown, Flash, User, ArrowDown2 } from 'iconsax-react';
+import { Check } from 'lucide-react';
 import Nav from '@/components/Widgets/Nav';
 import Footer from '@/components/Widgets/Footer';
 
@@ -91,7 +92,7 @@ const PricingPage = () => {
 
           {/* Billing Toggle */}
           <div className="flex justify-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-1">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-1.5">
               <div className="flex">
                 <button
                   onClick={() => setBillingCycle('monthly')}
@@ -146,7 +147,7 @@ const PricingPage = () => {
                 {/* Popular Badge */}
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                    <div className="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-semibold">
                       Most Popular
                     </div>
                   </div>
@@ -154,17 +155,15 @@ const PricingPage = () => {
 
                 {/* Plan Header */}
                 <div className="text-center mb-8">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
+                  {/* <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
                     <IconComponent size={32} className="text-white" />
-                  </div>
+                  </div> */}
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                   <p className="text-gray-600 mb-6">{plan.description}</p>
                   
                   {/* Price */}
                   <div className="mb-6">
-                    {price === 0 ? (
-                      <div className="text-4xl font-bold text-gray-900">Free</div>
-                    ) : (
+                    {
                       <div>
                         <div className="text-4xl font-bold text-gray-900">
                           ${price}
@@ -178,7 +177,7 @@ const PricingPage = () => {
                           </div>
                         )}
                       </div>
-                    )}
+                    }
                   </div>
                 </div>
 
@@ -198,7 +197,7 @@ const PricingPage = () => {
                 <button
                   className={`w-full py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:shadow-xl hover:-translate-y-1'
+                      ? 'bg-orange-500 text-white hover:shadow-xl hover:-translate-y-1'
                       : plan.id === 'free'
                       ? 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                       : 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-xl hover:-translate-y-1'
